@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { comparePassword, generateToken } from '@/lib/auth'
-
+export const dynamic = 'force-dynamic'
 // POST /api/auth/login
 export async function POST(request: NextRequest) {
   try {
