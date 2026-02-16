@@ -1,18 +1,16 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
-// R2 Client Configuration
-const r2Client = new S3Client({
-  region: 'auto',
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+// 腾讯云 COS Client Configuration
+const cosClient = new S3Client({
+  region: process.env.COS_REGION || 'ap-shanghai',
+  endpoint: `https://cos.${process.env.COS_REGION || 'ap-shanghai'}.myqcloud.com`,
   credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.COS_SECRET_ID!,
+    secretAccessKey: process.env.COS_SECRET_KEY!,
   },
 })
 
-const bucketName = process.env.R2_BUCKET_NAME!
-const publicUrl = process.env.R2_PUBLIC_URL
+const bucketName = process.env.COS_BUCKET_NAME!
 
 export async function uploadFile(file: Buffer, key: string, contentType: string): Promise<string> {
   const command = new PutObjectCommand({
@@ -22,13 +20,10 @@ export async function uploadFile(file: Buffer, key: string, contentType: string)
     ContentType: contentType,
   })
 
-  await r2Client.send(command)
+  await cosClient.send(command)
 
-  // Return public URL
-  if (publicUrl) {
-    return `${publicUrl}/${key}`
-  }
-  return `https://${bucketName}.${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${key}`
+  // 返回腾讯云 COS 公开访问 URL
+  return `https://${bucketName}.cos.${process.env.COS_REGION || 'ap-shanghai'}.myqcloud.com/${key}`
 }
 
 export async function deleteFile(key: string) {
@@ -37,7 +32,7 @@ export async function deleteFile(key: string) {
     Key: key,
   })
 
-  await r2Client.send(command)
+  await cosClient.send(command)
 }
 
 export function generateFileKey(productId: string, docType: string, filename: string): string {
@@ -49,7 +44,6 @@ export function generateFileKey(productId: string, docType: string, filename: st
 export function extractKeyFromUrl(url: string): string | null {
   try {
     const urlObj = new URL(url)
-    // Remove leading slash
     return urlObj.pathname.substring(1)
   } catch {
     return null
