@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getProducts, createProduct, deleteProduct, reorderProducts, updateProduct } from '@/lib/db'
 import { Product, DocType } from '@/types'
-
+export const dynamic = 'force-dynamic'
 // GET /api/products - List all products with documents
 export async function GET() {
   try {
