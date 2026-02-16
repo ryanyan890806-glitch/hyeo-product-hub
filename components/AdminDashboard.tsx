@@ -87,7 +87,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     const targetIndex = direction === 'up' ? index - 1 : index + 1
     
     // Swap
-    [newProducts[index], newProducts[targetIndex]] = [newProducts[targetIndex], newProducts[index]]
+   ;[newProducts[index], newProducts[targetIndex]] = [newProducts[targetIndex], newProducts[index]]
     
     // Update sort orders
     const updates = newProducts.map((p, i) => ({ id: p.id, sortOrder: i }))
