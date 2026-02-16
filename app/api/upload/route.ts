@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { addDocument, updateProduct } from '@/lib/db'
 import { uploadFile, generateFileKey } from '@/lib/storage'
-
+export const dynamic = 'force-dynamic'
 // POST /api/upload - Upload file
 export async function POST(request: NextRequest) {
   try {
